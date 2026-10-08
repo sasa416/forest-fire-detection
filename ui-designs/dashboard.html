@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>森林火灾烟雾检测系统 - 首页</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(180deg, #001529 0%, #002140 100%);
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+        .sidebar-collapsed {
+            width: 64px;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: rgba(255, 255, 255, 0.65);
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #16a34a;
+        }
+        .sidebar-item.active {
+            background: rgba(22, 163, 74, 0.2);
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <!-- Logo -->
+            <div class="flex items-center justify-center h-16 border-b border-white border-opacity-10">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                        <span class="mdi mdi-fire text-white text-lg"></span>
+                    </div>
+                    <span class="ml-3 text-white font-semibold text-sm">森林火灾检测</span>
+                </div>
+            </div>
+
+            <!-- 导航菜单 -->
+            <nav class="mt-4">
+                <a href="#" class="sidebar-item active">
+                    <span class="mdi mdi-view-dashboard text-lg"></span>
+                    <span class="ml-3">首页</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-image text-lg"></span>
+                    <span class="ml-3">图像检测</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-video text-lg"></span>
+                    <span class="ml-3">视频检测</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-map-marker text-lg"></span>
+                    <span class="ml-3">航拍分析</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-bell text-lg"></span>
+                    <span class="ml-3">告警中心</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-chart-bar text-lg"></span>
+                    <span class="ml-3">数据分析</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-cog text-lg"></span>
+                    <span class="ml-3">模型管理</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-account-group text-lg"></span>
+                    <span class="ml-3">用户管理</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-shield-check text-lg"></span>
+                    <span class="ml-3">权限管理</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-file-document text-lg"></span>
+                    <span class="ml-3">系统日志</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-tools text-lg"></span>
+                    <span class="ml-3">系统设置</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1">
+            <!-- 顶部栏 -->
+            <header class="bg-white h-16 flex items-center justify-between px-6 shadow-sm">
+                <div class="flex items-center">
+                    <button class="mr-4">
+                        <span class="mdi mdi-menu text-xl text-gray-600"></span>
+                    </button>
+                    <nav class="flex items-center text-sm text-gray-500">
+                        <a href="#" class="hover:text-green-600">首页</a>
+                        <span class="mx-2">/</span>
+                        <span class="text-gray-800">仪表盘</span>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="relative p-2 text-gray-600 hover:text-green-600">
+                        <span class="mdi mdi-bell-outline text-xl"></span>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <span class="mdi mdi-account text-white"></span>
+                        </div>
+                        <span class="text-sm text-gray-700">管理员</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <main class="p-6">
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-4 gap-6 mb-6">
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">今日检测</p>
+                                <p class="text-3xl font-bold text-gray-800">128</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <span class="mdi mdi-image text-blue-600 text-xl"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-green-500 flex items-center">
+                                <span class="mdi mdi-arrow-up"></span>
+                                12%
+                            </span>
+                            <span class="text-gray-500 ml-2">较昨日</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">火焰检测</p>
+                                <p class="text-3xl font-bold text-red-600">5</p>
+                            </div>
+                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                <span class="mdi mdi-fire text-red-600 text-xl"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-red-500 flex items-center">
+                                <span class="mdi mdi-arrow-up"></span>
+                                2
+                            </span>
+                            <span class="text-gray-500 ml-2">新增</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">烟雾检测</p>
+                                <p class="text-3xl font-bold text-orange-600">12</p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                <span class="mdi mdi-smoke text-orange-600 text-xl"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-orange-500 flex items-center">
+                                <span class="mdi mdi-arrow-up"></span>
+                                5
+                            </span>
+                            <span class="text-gray-500 ml-2">新增</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">告警数量</p>
+                                <p class="text-3xl font-bold text-yellow-600">3</p>
+                            </div>
+                            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                                <span class="mdi mdi-alert text-yellow-600 text-xl"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-red-500 flex items-center">
+                                <span class="mdi mdi-arrow-up"></span>
+                                1
+                            </span>
+                            <span class="text-gray-500 ml-2">紧急</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快捷操作 -->
+                <div class="content-card p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">快捷操作</h3>
+                    <div class="grid grid-cols-4 gap-4">
+                        <button class="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition">
+                            <span class="mdi mdi-image text-green-600 text-3xl mb-2"></span>
+                            <span class="text-sm font-medium text-green-700">图像检测</span>
+                        </button>
+                        <button class="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+                            <span class="mdi mdi-video text-blue-600 text-3xl mb-2"></span>
+                            <span class="text-sm font-medium text-blue-700">视频检测</span>
+                        </button>
+                        <button class="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition">
+                            <span class="mdi mdi-map-marker text-purple-600 text-3xl mb-2"></span>
+                            <span class="text-sm font-medium text-purple-700">航拍分析</span>
+                        </button>
+                        <button class="flex flex-col items-center p-4 bg-red-50 rounded-lg hover:bg-red-100 transition">
+                            <span class="mdi mdi-bell text-red-600 text-3xl mb-2"></span>
+                            <span class="text-sm font-medium text-red-700">告警中心</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- 最近检测记录 -->
+                    <div class="content-card">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-800">最近检测记录</h3>
+                                <a href="#" class="text-sm text-green-600 hover:text-green-500">查看全部</a>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">时间</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">类型</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">置信度</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">位置</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 text-sm text-gray-900">10:30:00</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">火焰</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-green-600 font-medium">92.5%</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">监控点A</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 text-sm text-gray-900">10:25:00</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">烟雾</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-green-600 font-medium">88.3%</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">监控点B</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 text-sm text-gray-900">10:20:00</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">火焰</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-green-600 font-medium">95.1%</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">航拍图C</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 最新告警 -->
+                    <div class="content-card">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-800">最新告警</h3>
+                                <div class="flex items-center">
+                                    <span class="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full mr-2">3条未读</span>
+                                    <a href="#" class="text-sm text-green-600 hover:text-green-500">查看全部</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-start p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+                                <div class="flex-shrink-0">
+                                    <span class="mdi mdi-alert-circle text-red-500 text-xl"></span>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-red-800">监控点A发现明火，火势较大</p>
+                                    <p class="text-xs text-red-600 mt-1">火焰: 3处 | 烟雾: 5处 | 2分钟前</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                                <div class="flex-shrink-0">
+                                    <span class="mdi mdi-alert text-orange-500 text-xl"></span>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-orange-800">监控点B烟雾浓度超标</p>
+                                    <p class="text-xs text-orange-600 mt-1">烟雾: 8处 | 5分钟前</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+                                <div class="flex-shrink-0">
+                                    <span class="mdi mdi-alert-outline text-yellow-500 text-xl"></span>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-yellow-800">航拍图C疑似火点，需人工确认</p>
+                                    <p class="text-xs text-yellow-600 mt-1">火焰: 1处 | 烟雾: 2处 | 10分钟前</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模型状态 -->
+                <div class="content-card p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">模型状态</h3>
+                    <div class="grid grid-cols-4 gap-6">
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <p class="text-sm text-gray-500">当前模型</p>
+                            <p class="text-lg font-semibold text-gray-800 mt-1">YOLOv8s</p>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <p class="text-sm text-gray-500">模型精度</p>
+                            <p class="text-lg font-semibold text-green-600 mt-1">92.5%</p>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <p class="text-sm text-gray-500">平均推理时间</p>
+                            <p class="text-lg font-semibold text-gray-800 mt-1">45.2ms</p>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <p class="text-sm text-gray-500">GPU状态</p>
+                            <p class="text-lg font-semibold text-green-600 mt-1">正常</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

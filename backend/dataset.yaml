@@ -1,0 +1,7 @@
+# 森林火灾烟雾检测数据集配置
+path: D:/workbody/消防/forest-fire-detection/data/yolo_format
+train: images/train
+val: images/val
+
+nc: 2
+names: ['fire', 'smoke']

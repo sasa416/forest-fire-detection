@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="h3bnRlpD2u2ZOs6HUGc2CK">
+<head data-page-node-id="7A5PR5xrnvDk1YPboYLQJr">
+    <meta charset="UTF-8" data-page-node-id="YRDVPR1TrHQGPd4ZsmgMpE">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="xaJIvm67CQlzN22cuHOyEx">
+    <title>森林火灾烟雾检测系统 - 图像检测</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" data-page-node-id="6DGUoyedAIbHZZOSnxS3kT">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet" data-page-node-id="rhf37hWwWNOzxGFflZA7Ig">
+    <style>
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(180deg, #001529 0%, #002140 100%);
+            min-height: 100vh;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: rgba(255, 255, 255, 0.65);
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #16a34a;
+        }
+        .sidebar-item.active {
+            background: rgba(22, 163, 74, 0.2);
+        }
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+        .result-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .detection-box {
+            position: absolute;
+            border: 2px solid;
+            border-radius: 4px;
+        }
+        .detection-box.fire {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .detection-box.smoke {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+        .detection-label {
+            position: absolute;
+            top: -24px;
+            left: 0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+        }
+        .detection-label.fire {
+            background: #ef4444;
+        }
+        .detection-label.smoke {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body class="bg-gray-100" data-page-node-id="EFUWMw2TwgbaHWELoksvrz">
+    <div class="flex" data-page-node-id="DQefDUEmAMoXjS9p0FcRKj">
+        <!-- 侧边栏 -->
+        <div class="sidebar" data-page-node-id="M0F7hTv5ajBkwCVJXx7MnI">
+            <div class="flex items-center justify-center h-16 border-b border-white border-opacity-10" data-page-node-id="JymS1mcR3te2B1KciFdEi7">
+                <div class="flex items-center" data-page-node-id="daTU72p7TTTt2Y2J9x82Ds">
+                    <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center" data-page-node-id="W1EEORtTuitpaHjnPjLT0q">
+                        <span class="mdi mdi-fire text-white text-lg" data-page-node-id="8rw3vLpXpGg7pjemw5ogUl"></span>
+                    </div>
+                    <span class="ml-3 text-white font-semibold text-sm" data-page-node-id="Pns8QmGEG7DX5VciENYacu">森林火灾检测</span>
+                </div>
+            </div>
+            <nav class="mt-4" data-page-node-id="LUwzsycSDWfLwWm6XHEuU0">
+                <a href="#" class="sidebar-item" data-page-node-id="2Ino5VaqsjqySNAqiJU5Wa">
+                    <span class="mdi mdi-view-dashboard text-lg" data-page-node-id="D7jwv1yCyxosGkttWVmZA6"></span>
+                    <span class="ml-3" data-page-node-id="na87zYrOZ1nwAP448uHG0z">首页</span>
+                </a>
+                <a href="#" class="sidebar-item active" data-page-node-id="jQLGVmgDwbRNiWuy0fHqZi">
+                    <span class="mdi mdi-image text-lg" data-page-node-id="bPHdTwOprKEfgqafuGx5Ml"></span>
+                    <span class="ml-3" data-page-node-id="NkpkGHrYBMogdQUPTJoU4p">图像检测</span>
+                </a>
+                <a href="#" class="sidebar-item" data-page-node-id="BidAEegzCwCeVAVJhFwmlI">
+                    <span class="mdi mdi-video text-lg" data-page-node-id="001KEplukKx5sHqVu8EjlD"></span>
+                    <span class="ml-3" data-page-node-id="5lXdfV8wIGOGMPFx2gAQQt">视频检测</span>
+                </a>
+                <a href="#" class="sidebar-item" data-page-node-id="DCL6r28WWBjFKFXdEojyiW">
+                    <span class="mdi mdi-map-marker text-lg" data-page-node-id="NitqhUhmiBE4lQSHOnBIZy"></span>
+                    <span class="ml-3" data-page-node-id="UdSdL5XRE0arsKAruilwwr">航拍分析</span>
+                </a>
+                <a href="#" class="sidebar-item" data-page-node-id="HWlnAeAfsyhgYbm2nvrtu7">
+                    <span class="mdi mdi-bell text-lg" data-page-node-id="8LTGmoCOnpnoKzhBBVZPJS"></span>
+                    <span class="ml-3" data-page-node-id="VZCT2QUmzK0IApgxoMPwCN">告警中心</span>
+                </a>
+                <a href="#" class="sidebar-item" data-page-node-id="ku17FD4M4hkv5GPlm0qEhr">
+                    <span class="mdi mdi-chart-bar text-lg" data-page-node-id="8zSeHUYDseH6Wc7OU6BCDO"></span>
+                    <span class="ml-3" data-page-node-id="728AIwTPRiRssHcSx6a6ev">数据分析</span>
+                </a>
+                <a href="#" class="sidebar-item" data-page-node-id="lRzxqCWvnFu6PTFAasqVLu">
+                    <span class="mdi mdi-cog text-lg" data-page-node-id="VfoDvw7wDfXAwApSnCvydE"></span>
+                    <span class="ml-3" data-page-node-id="WICvDwRBBn4MVnmDm1viYF">模型管理</span>
+                </a>
+                <a href="#" class="sidebar-item" data-page-node-id="FN6V102SkUpq5dh2szz9EZ">
+                    <span class="mdi mdi-tools text-lg" data-page-node-id="oZjno7vMcf0xROTTYjmbDZ"></span>
+                    <span class="ml-3" data-page-node-id="IMG5upiIbCp1NTnWITmRxp">系统设置</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1" data-page-node-id="6HeiIUx53sji5EBowLAR2T">
+            <header class="bg-white h-16 flex items-center justify-between px-6 shadow-sm" data-page-node-id="jYwIFaQXNj6X4hmmFoksBe">
+                <div class="flex items-center" data-page-node-id="qtUpegBnPXvGMcx8p7GDVS">
+                    <button class="mr-4" data-page-node-id="OmQ1nMyuC3oRJ63ZDnO7AK">
+                        <span class="mdi mdi-menu text-xl text-gray-600" data-page-node-id="z66ApD1GKArlGlSOjTNsXg"></span>
+                    </button>
+                    <nav class="flex items-center text-sm text-gray-500" data-page-node-id="q4rCdDitpFpJgexCAz4hhA">
+                        <a href="#" class="hover:text-green-600" data-page-node-id="gAcAQWivXT3AmFEfkFRygk">首页</a>
+                        <span class="mx-2" data-page-node-id="tWJYTFyGV8hayYsDRXjo0B">/</span>
+                        <span class="text-gray-800" data-page-node-id="D0QbXgVYySxDsrZZPqI28L">图像检测</span>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4" data-page-node-id="AkUv9EPRprWEXGeDLh4rb9">
+                    <button class="relative p-2 text-gray-600 hover:text-green-600" data-page-node-id="40oswqQMiqC7GqgftuPRJG">
+                        <span class="mdi mdi-bell-outline text-xl" data-page-node-id="HozxkQu1iCC9splttWutJU"></span>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" data-page-node-id="VKsM5Sn2EfDPEg9FNhFpvF"></span>
+                    </button>
+                    <div class="flex items-center space-x-2" data-page-node-id="YZfoKTFEopmHqZtAso5n64">
+                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center" data-page-node-id="kZJDDqGcGYMSaYiEIevn33">
+                            <span class="mdi mdi-account text-white" data-page-node-id="oYaUwpiMmbpEM8M04XRqyn"></span>
+                        </div>
+                        <span class="text-sm text-gray-700" data-page-node-id="vmHx3YsSJ6MgX6xxqqUVrn">管理员</span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-6" data-page-node-id="X7JeAi4eRu6R4rSCWllxJt">
+                <div class="content-card" data-page-node-id="tkBzdWnMSlDyaNzn9QBoP4">
+                    <div class="p-6 border-b border-gray-200" data-page-node-id="p8C8PqMaZfUwaBmItpyrKc">
+                        <div class="flex items-center justify-between" data-page-node-id="1WuJtTZjxcOcSoo8p6EcFr">
+                            <h2 class="text-xl font-semibold text-gray-800" data-page-node-id="HghtoGRFxaMWp7QGw2u8za">图像检测</h2>
+                            <div class="flex space-x-2" data-page-node-id="juc9Irzr3tmwBGDuolV3bu">
+                                <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center" data-page-node-id="YIOkt9rNav0HWNibJjQUOJ">
+                                    <span class="mdi mdi-upload mr-2" data-page-node-id="PShqRH4obuEUTXMGxLIPCP"></span>
+                                    开始检测
+                                </button>
+                                <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center" data-page-node-id="gXG2fkVZRWPwCf9M4qA3rH">
+                                    <span class="mdi mdi-delete mr-2" data-page-node-id="0IOOWPoESCPaLYB9MNFH4u"></span>
+                                    清除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6" data-page-node-id="uYvWTOVsKccLj8OilX3ty6">
+                        <div class="grid grid-cols-2 gap-6" data-page-node-id="079mQnrVY13cCJVYiFnApq">
+                            <!-- 左侧：上传区域 -->
+                            <div data-page-node-id="8TltxTvkbTfo8KCWEfdMIG">
+                                <div class="upload-area p-8 mb-6" data-page-node-id="8mWTPHvUGNjuLRHnGWMTXN">
+                                    <div class="text-center" data-page-node-id="3Unnv3BxCwDTWkETAXfSLs">
+                                        <span class="mdi mdi-cloud-upload text-4xl text-gray-400 mb-4" data-page-node-id="syrKA13Or0CcS4864s5VfG"></span>
+                                        <h3 class="text-lg font-medium text-gray-700 mb-2" data-page-node-id="N3FiJL0Bk5K6tAgw8jYcMm">拖拽图片到此处，或点击上传</h3>
+                                        <p class="text-sm text-gray-500" data-page-node-id="BnE2QsntUBBGTXbTLFoslO">支持 JPG、PNG、BMP、WebP 格式，最大 10MB</p>
+                                        <button class="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700" data-page-node-id="vRF7N0P6pRL31fJhqP4LoY">
+                                            选择文件
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 参数配置 -->
+                                <div class="content-card p-6" data-page-node-id="XnRynWdvBsLDxuzr9ZYUGS">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-4" data-page-node-id="PpnCiJ5FXL428a1wjcX4r2">检测参数</h3>
+                                    <div class="space-y-4" data-page-node-id="bJdJ3Bf6yARAhCvTDKNiUS">
+                                        <div data-page-node-id="Hfd0d4GYMmRFQQlx03HXcB">
+                                            <div class="flex items-center justify-between mb-2" data-page-node-id="hh9ey18ML6k1F9Fnvr0nVW">
+                                                <label class="text-sm font-medium text-gray-700" data-page-node-id="F4LEjfxXBYTyR37WYPVqI9">置信度阈值</label>
+                                                <span class="text-sm text-gray-500" data-page-node-id="zrGf39KKxivvUBGxRT5l41">0.50</span>
+                                            </div>
+                                            <input type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0.1" max="0.9" step="0.05" value="0.5" data-page-node-id="YbAMLsy2lpSCU62mwZKUDe">
+                                            <div class="flex justify-between text-xs text-gray-500 mt-1" data-page-node-id="D0By8gTAjhI8HIHF9cj8qK">
+                                                <span data-page-node-id="DdW5mZChwRCD2GlyM84Ef2">0.1</span>
+                                                <span data-page-node-id="kQACJagrBIqaEg86kxRqOA">0.9</span>
+                                            </div>
+                                        </div>
+
+                                        <div data-page-node-id="v1oZivNeIqAmyHAFmU1hcs">
+                                            <div class="flex items-center justify-between mb-2" data-page-node-id="6puR33earS41QKmQvPbEqE">
+                                                <label class="text-sm font-medium text-gray-700" data-page-node-id="PIOdKleijsb2WNkEGjP5SW">IOU阈值</label>
+                                                <span class="text-sm text-gray-500" data-page-node-id="D94DQQ35Pthbr9kSeciTJ3">0.45</span>
+                                            </div>
+                                            <input type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0.1" max="0.9" step="0.05" value="0.45" data-page-node-id="8zBszwzDBCpFTHLLw7UN4r">
+                                            <div class="flex justify-between text-xs text-gray-500 mt-1" data-page-node-id="JbDxK3BcV7oYpJHSKVjfom">
+                                                <span data-page-node-id="cTacH45g1PiQlhInn4mHBV">0.1</span>
+                                                <span data-page-node-id="6b3vCcisgOiyY1olYj8Xwg">0.9</span>
+                                            </div>
+                                        </div>
+
+                                        <div data-page-node-id="KgUXjXCNuCp5gMQFu7R8HS">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2" data-page-node-id="dqMlEUcF4wHbfE0ZFHEx3e">检测模型</label>
+                                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg" data-page-node-id="rQ4AIaYHLcjJVgedJ1pDXE">
+                                                <option data-page-node-id="7g17oSUc1t6LTGBoCC7hSH">YOLOv8s (推荐)</option>
+                                                <option data-page-node-id="y6o2OILqKa2lRx69OFbVga">YOLOv8m</option>
+                                                <option data-page-node-id="J1vo56gqwmNNaElEXsQmNb">YOLOv8l</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 右侧：检测结果 -->
+                            <div data-page-node-id="dJimHkwOlchF2jX4kaV6e0">
+                                <div class="content-card p-6 mb-6" data-page-node-id="5CxZDG09R6gNqNoUq3ug2R">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-4" data-page-node-id="bHR6kMFgo5TMV8h4lldL19">检测结果</h3>
+                                    
+                                    <!-- 模拟检测结果图 -->
+                                    <div class="relative bg-gray-100 rounded-lg overflow-hidden mb-4" style="height: 300px;" data-page-node-id="WiIETgB1hEr6zp9Gi1jMSz">
+                                        <div class="absolute inset-0 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center" data-page-node-id="Xnlpve7jXSjhjJF4SuaTCw">
+                                            <span class="mdi mdi-image text-6xl text-gray-400" data-page-node-id="cOm9q7hU1jO2hMAxZXOSRc"></span>
+                                        </div>
+                                        
+                                        <!-- 模拟检测框 -->
+                                        <div class="result-overlay" data-page-node-id="OOW0TVgQVhFQevKh0L3SFT">
+                                            <div class="detection-box fire" style="top: 20%; left: 15%; width: 30%; height: 40%;" data-page-node-id="Z2n2ucltPirA7hcCFIjf4W">
+                                                <span class="detection-label fire" data-page-node-id="cdsI71ViV4kzGabfshrSx3">火焰 92.5%</span>
+                                            </div>
+                                            <div class="detection-box smoke" style="top: 10%; left: 50%; width: 35%; height: 50%;" data-page-node-id="z6T2ekl4LxgmlWOpXQoYhH">
+                                                <span class="detection-label smoke" data-page-node-id="Pkm2s3NuXthb6B47cQj45v">烟雾 88.3%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 统计信息 -->
+                                    <div class="grid grid-cols-2 gap-4 mb-4" data-page-node-id="QG6DyeeqMn1rHgp0pNiFKY">
+                                        <div class="p-4 bg-red-50 rounded-lg" data-page-node-id="W3ggYCdGfoFFWWzMaO18RT">
+                                            <div class="flex items-center justify-between" data-page-node-id="5Iu7qcFVqrw0EdbapGMWIb">
+                                                <span class="text-sm text-red-600" data-page-node-id="YC1tpKS6ZzUYLsAj658GJS">火焰数量</span>
+                                                <span class="text-2xl font-bold text-red-600" data-page-node-id="Q2hKVNK9Jte3Y8Cu4k0KIV">1</span>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 bg-orange-50 rounded-lg" data-page-node-id="b5IQ1ilZ71T7C69CTfcvnz">
+                                            <div class="flex items-center justify-between" data-page-node-id="ohF7oGUle6gCeM22rTGN5U">
+                                                <span class="text-sm text-orange-600" data-page-node-id="6uEY0kzUJq0GYuXMKzYRyk">烟雾数量</span>
+                                                <span class="text-2xl font-bold text-orange-600" data-page-node-id="K03Qkn9RQi5eHW1ZJRGqJc">1</span>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 bg-blue-50 rounded-lg" data-page-node-id="8Qb8YFxoxFMGItrduM73ul">
+                                            <div class="flex items-center justify-between" data-page-node-id="hvLBhGxfPZsgTYmSIt8rhs">
+                                                <span class="text-sm text-blue-600" data-page-node-id="4aWTNtZQMu8WXhIemqx09S">推理时间</span>
+                                                <span class="text-2xl font-bold text-blue-600" data-page-node-id="aVDj0deExbr84H2ERi0kwa">45.2ms</span>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 bg-purple-50 rounded-lg" data-page-node-id="28gkLHXQNCLO3q1v4OpD4y">
+                                            <div class="flex items-center justify-between" data-page-node-id="trple5wLFlqFcpwvbTYQqC">
+                                                <span class="text-sm text-purple-600" data-page-node-id="B7nSGbxUg1DHFhzlZU33PL">图像尺寸</span>
+                                                <span class="text-2xl font-bold text-purple-600" data-page-node-id="MmKiad1FV09yRhqWu4l2vm">1920×1080</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 操作按钮 -->
+                                    <div class="flex space-x-2" data-page-node-id="jAz3LFz79XbQs95ZNLdgNs">
+                                        <button class="flex-1 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center justify-center" data-page-node-id="tzSmv9J97u6Zm3BA6oW8Jc">
+                                            <span class="mdi mdi-download mr-2" data-page-node-id="J2HtMYCwgU9i4WXdRdfDnS"></span>
+                                            下载结果
+                                        </button>
+                                        <button class="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center justify-center" data-page-node-id="gHOE1MfJpoJDtBDi4Qvf9e">
+                                            <span class="mdi mdi-magnify mr-2" data-page-node-id="eLPfmWtm26BxyytiJPZNyx"></span>
+                                            预览标注图
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 检测详情 -->
+                                <div class="content-card" data-page-node-id="sqhJJvKY12ACuYsT3MX3mB">
+                                    <div class="p-6 border-b border-gray-200" data-page-node-id="RFQpD97H2FvA0a1adf9194">
+                                        <h3 class="text-lg font-semibold text-gray-800" data-page-node-id="SfWmjfXWAO0VVOL4ekHA0Z">检测详情</h3>
+                                    </div>
+                                    <div class="overflow-x-auto" data-page-node-id="1U7dvWhFsNpaSGApx9Rvzk">
+                                        <table class="w-full" data-page-node-id="VmzsbX2an1CZ8RFQ2QjBG2">
+                                            <thead class="bg-gray-50" data-page-node-id="xyJdB45ncPuhslScjiwtrR">
+                                                <tr data-page-node-id="Kmf8sHmBgm4WETPvtHrHID">
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-page-node-id="3qKyKAsSxs7jA9udDn50tD">类别</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-page-node-id="PPUJKpGD9CXskB5lQXezUi">置信度</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-page-node-id="NvfpEEGE26KSxGrNZHxm32">位置</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200" data-page-node-id="HChlpJVtQF2lpSlGbskOVz">
+                                                <tr data-page-node-id="j3OkDyg9zpOpoifVoXv6PU">
+                                                    <td class="px-6 py-4" data-page-node-id="lVW3vIPxaHfGB7GxCBeY4G">
+                                                        <span class="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full" data-page-node-id="PxeIBlk2CfaSy7tgb8QbE4">火焰</span>
+                                                    </td>
+                                                    <td class="px-6 py-4 text-sm text-green-600 font-medium" data-page-node-id="arNnnCmKpdWJNvkCirK4lr">92.5%</td>
+                                                    <td class="px-6 py-4 text-sm text-gray-500" data-page-node-id="of7AhxW9nAKkDeFGraiFDy">(100, 150) - (300, 400)</td>
+                                                </tr>
+                                                <tr data-page-node-id="chXG39wpLQqEwlMOm6JOT4">
+                                                    <td class="px-6 py-4" data-page-node-id="bjxJCAd04zuYlbL1FYfbf9">
+                                                        <span class="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-full" data-page-node-id="wi8zznXcvvz4RqH5dlKsSC">烟雾</span>
+                                                    </td>
+                                                    <td class="px-6 py-4 text-sm text-green-600 font-medium" data-page-node-id="bIGfPw54bt28WFKdpPH7Gg">88.3%</td>
+                                                    <td class="px-6 py-4 text-sm text-gray-500" data-page-node-id="okooDkAOaelvqqVuZgWKor">(280, 100) - (450, 350)</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

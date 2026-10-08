@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="UPErqz5BtwwxV6jSLNu9gz">
+<head data-page-node-id="og4UAOSTtrLK9rPZpxbmPo">
+    <meta charset="UTF-8" data-page-node-id="nl16Zoo1Jl08PfDuJopwju">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="PmwAh1IWrgV4k1GedfkxE5">
+    <title>森林火灾烟雾检测系统 - UI设计展示</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" data-page-node-id="09xTNoRPwwwDEHjFpEbsT7">
+    <style>
+        .design-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .design-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .design-preview {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .design-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .design-card:hover .design-overlay {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen" data-page-node-id="djBxQrBFXjDKXcUIXzhnTz">
+    <div class="container mx-auto px-4 py-8" data-page-node-id="BBflrFtCV9pd5lkvo8Xymi">
+        <!-- 头部 -->
+        <div class="text-center mb-12" data-page-node-id="5icFTzXn5qPPl6wOiAJY2O">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4" data-page-node-id="GR8fosDUJk5eVDPkDGBXzm">森林火灾烟雾检测系统</h1>
+            <p class="text-xl text-gray-600" data-page-node-id="udOLhQeWt5artzJYRK3Ddy">UI设计展示</p>
+            <div class="w-24 h-1 bg-green-500 mx-auto mt-4" data-page-node-id="ahy35gIiLXgON3DajCr0T9"></div>
+        </div>
+
+        <!-- 设计规范说明 -->
+        <div class="bg-white rounded-xl p-6 mb-8 shadow-sm" data-page-node-id="yImHdexA8dbAsu5Zgz1NLE">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4" data-page-node-id="JTrdS7O6DphEzN9oQjOOiA">设计规范</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" data-page-node-id="r09Etc2cM7P0o5mEEa9NmV">
+                <div class="p-4 bg-green-50 rounded-lg" data-page-node-id="H1gcRFSxAGeXKhPZSsIClY">
+                    <h3 class="font-semibold text-green-800 mb-2" data-page-node-id="DGbAnvnEyQM2HX39WrFQwO">色彩系统</h3>
+                    <p class="text-sm text-green-600" data-page-node-id="AoHzUYgJehZy3XF2l1NRyK">森林绿 (#16a34a) 为主色调，火焰红 (#ef4444) 和烟雾橙 (#f59e0b) 为警示色</p>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg" data-page-node-id="PKAbmleuhE0RABUABZOhnZ">
+                    <h3 class="font-semibold text-blue-800 mb-2" data-page-node-id="CkEosaiFG7ImL6bAG3DI9U">布局规范</h3>
+                    <p class="text-sm text-blue-600" data-page-node-id="w9hGJKEcq8E0Avl70t93ZW">侧边栏220px，顶部栏60px，内容区间距24px，卡片圆角12px</p>
+                </div>
+                <div class="p-4 bg-purple-50 rounded-lg" data-page-node-id="hE2hP23JMA1RByO7XcW4Hs">
+                    <h3 class="font-semibold text-purple-800 mb-2" data-page-node-id="S8hgsjRX1FKQHuuvBcZGCe">字体系统</h3>
+                    <p class="text-sm text-purple-600" data-page-node-id="FvKbytyqHGvPMoBBtqoCG1">系统默认字体，标题600粗细，正文400粗细，行高1.6</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页面展示 -->
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6" data-page-node-id="P9LPQcHP0GCSYmzswZRaAh">页面设计</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12" data-page-node-id="Z7sRhJVKSDz0zuMLBdARhH">
+            <!-- 登录页 -->
+            <div class="design-card" data-page-node-id="U79A2dRhyRgEKVbnS8VfDl">
+                <div class="design-preview" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);" data-page-node-id="aPOdw78LuRIbcVnQ9HLDhs">
+                    <div class="design-overlay" data-page-node-id="qdZvsT9sEqfDGpvvFZqU1D">
+                        <a href="login.html" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition" data-page-node-id="rW2k0hFKNLvNf65e8YDIYu">
+                            查看设计
+                        </a>
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center" data-page-node-id="1Tn6De2D8ghFSxVUwVujup">
+                        <div class="text-center" data-page-node-id="Htw5YqhnmAExONmIMZVGlW">
+                            <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4" data-page-node-id="EsnfuOsSTQEOUkkHI4NdNg">
+                                <span class="text-white text-2xl" data-page-node-id="8MlA0Bxai3I5IEBH8tnLJv">🔥</span>
+                            </div>
+                            <h3 class="text-white text-xl font-semibold" data-page-node-id="MGvRHhXCglEr82T629gHnY">登录页面</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6" data-page-node-id="tMknvoW2b3r56mqrxlvI84">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2" data-page-node-id="zCQGXuxd25ucbYeCZjehEq">登录页面</h3>
+                    <p class="text-gray-600 text-sm mb-4" data-page-node-id="WOoKCS9LNego52giT44Bwd">森林主题背景，居中卡片布局，包含用户名、密码输入和记住我功能</p>
+                    <div class="flex flex-wrap gap-2" data-page-node-id="n5DjgdCnbWfY9Tejbzz454">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="fkpRGBXpZUOBA38NOCnUAL">响应式设计</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="p1kSMPMLmVEBDzhDweTJ3l">表单验证</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="BZdo5vnpfYVWQg81tkyLcu">动画效果</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 仪表盘 -->
+            <div class="design-card" data-page-node-id="V1fl8uWCw3Y1l6HltUQzpH">
+                <div class="design-preview" style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #d1fae5 100%);" data-page-node-id="UoEKVxOVuJHOspAiSrnCMu">
+                    <div class="design-overlay" data-page-node-id="XrIycQZc7hCCFrJGpvpw70">
+                        <a href="dashboard.html" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition" data-page-node-id="iNkH5Wak7fQ04KVz7BS2Xn">
+                            查看设计
+                        </a>
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center" data-page-node-id="LH30jWKB08OluaiuPp3EzS">
+                        <div class="text-center" data-page-node-id="o8l7D46RUDQictQfPNMZhF">
+                            <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4" data-page-node-id="pj8mJSZZwGmrZexOsrSHBg">
+                                <span class="text-white text-2xl" data-page-node-id="3KMrlZPCSgilPR634BIQ3o">📊</span>
+                            </div>
+                            <h3 class="text-gray-800 text-xl font-semibold" data-page-node-id="16X2RBu1E5L2QGo75co0m1">仪表盘</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6" data-page-node-id="PR7rlH5HqlDqDsjmBozlL0">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2" data-page-node-id="z7HfJZuZEPG4KqH9JreMN2">首页仪表盘</h3>
+                    <p class="text-gray-600 text-sm mb-4" data-page-node-id="LExbj2UydJhwpF41Ck7sn7">统计卡片、快捷操作、检测记录、告警信息、模型状态等核心信息展示</p>
+                    <div class="flex flex-wrap gap-2" data-page-node-id="K8mRjFyewDXhpmV7Em61cP">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="k8FpiuHZ7bZ2go68LqsZCI">数据可视化</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="kgLQJfQDLg3uXpJUFs6g7s">实时更新</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="eXCJIbcrXWmeHiDdIENRgy">卡片布局</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 后台管理 -->
+            <div class="design-card" data-page-node-id="7kAmCvpUX96fr50dUcMWzC">
+                <div class="design-preview" style="background: linear-gradient(135deg, #001529 0%, #002140 50%, #003a70 100%);" data-page-node-id="FZoxMIWkzjHVUss3Nu3Dut">
+                    <div class="design-overlay" data-page-node-id="ThgMyvfTl48UjGYqXrhIOJ">
+                        <a href="admin.html" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition" data-page-node-id="fjSjPOGv4ouZVD3SiG4aIp">
+                            查看设计
+                        </a>
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center" data-page-node-id="AT7jylV4SMkHBKQuYdsJIr">
+                        <div class="text-center" data-page-node-id="YCvHBRXh0FqG415qkAo5io">
+                            <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4" data-page-node-id="0HB83WVIzrhvDpzbqkTV5A">
+                                <span class="text-white text-2xl" data-page-node-id="tOVDosKejnAlnvCu31cmQZ">⚙️</span>
+                            </div>
+                            <h3 class="text-white text-xl font-semibold" data-page-node-id="qBHImJikPDFMgimvUBHizG">后台管理</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6" data-page-node-id="EBc2NTcYHAYlD9fuspCHZx">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2" data-page-node-id="cjIQqLewbzux2U6XvIqgyn">后台管理系统</h3>
+                    <p class="text-gray-600 text-sm mb-4" data-page-node-id="QfFEcWGgh5TrbwGdwdfpxy">用户管理、角色权限、系统配置、告警规则、模型配置、数据备份等功能</p>
+                    <div class="flex flex-wrap gap-2" data-page-node-id="Qo7DLtmiZUEmGTFvrhpjeB">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="kR8i5ijdhfz0PGhxJRvwYy">CRUD操作</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="h9PWNzDHqtqbQL3l4p75Lz">权限控制</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="cZKDCu2gWRCXmWEInWCGFc">配置管理</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 实时监控 -->
+            <div class="design-card">
+                <div class="design-preview" style="background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%);">
+                    <div class="design-overlay">
+                        <a href="live-monitor.html" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                            查看设计
+                        </a>
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="mdi mdi-monitor text-white text-3xl"></span>
+                            </div>
+                            <h3 class="text-white text-xl font-semibold">实时监控</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">实时监控页面</h3>
+                    <p class="text-gray-600 text-sm mb-4">多路摄像头接入、MJPEG 实时画面、检测框叠加、WebSocket 实时数据面板、运行时调参</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">RTSP接入</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">多路管理</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">实时推流</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图像检测 -->
+            <div class="design-card" data-page-node-id="WIKQmKWA4TPbIVpToa3AoU">
+                <div class="design-preview" style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);" data-page-node-id="RTFFWh71tpZXoNAETgQuA4">
+                    <div class="design-overlay" data-page-node-id="RE9JCGaq1uzkWCAuiPyxbs">
+                        <a href="image-detect.html" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition" data-page-node-id="GhFI37XMpIo5NK3BNvgs4I">
+                            查看设计
+                        </a>
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center" data-page-node-id="stuYKR7YsqfW607CsPUuvP">
+                        <div class="text-center" data-page-node-id="UrcLI0tjuv63U2AvaZlOGG">
+                            <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4" data-page-node-id="ibyzFwnOTAQ9baAhapWNRy">
+                                <span class="text-white text-2xl" data-page-node-id="vsL4Lh2FuNFYrnlQbyqPlV">📷</span>
+                            </div>
+                            <h3 class="text-gray-800 text-xl font-semibold" data-page-node-id="o9S76jAqlBbytcUbAwwXxJ">图像检测</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6" data-page-node-id="ac5xY2ZOQH5fX7qaL7AdQG">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2" data-page-node-id="t9tHyxQtrqgz9RIeVcTFYp">图像检测页面</h3>
+                    <p class="text-gray-600 text-sm mb-4" data-page-node-id="caIrDxLSjy5TLJ60BF0cyx">图片上传、参数配置、检测结果展示、边界框标注、检测详情表格</p>
+                    <div class="flex flex-wrap gap-2" data-page-node-id="okYVgGqH5RQDDlihhlXNbb">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="jtCS6ULAkFCHRpmpffPWIE">拖拽上传</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="ZQ3a4ZjeDMwXPSBlABRofR">实时预览</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full" data-page-node-id="0AiL7pm3HrS5EDWHEJBCDe">结果导出</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设计文件列表 -->
+        <div class="bg-white rounded-xl p-6 shadow-sm" data-page-node-id="6NZFFrPoYFWmIKE94Q5pM4">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6" data-page-node-id="VEbHkzktBcaPlF2rMCL2Mg">设计文件</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" data-page-node-id="AexPDSA4JBEy80MMcofjt9">
+                <a href="login.html" class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition" data-page-node-id="h8JlEmR5L13ULLcCeCyemh">
+                    <div class="flex items-center" data-page-node-id="erjvhkuI7WzUDSiNjXuvDe">
+                        <span class="mdi mdi-file-document text-green-600 text-xl mr-3" data-page-node-id="AvG7ZR47GiO4DFhWZJzJO0"></span>
+                        <div data-page-node-id="eNRn5zhkH5vt8d6ClFuo9S">
+                            <p class="font-medium text-gray-800" data-page-node-id="w9KKgjESgo8ge958IgmvJM">login.html</p>
+                            <p class="text-sm text-gray-500" data-page-node-id="BRI9FLvzLZPpM0qQY9bMRZ">登录页面</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="dashboard.html" class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition" data-page-node-id="YsaxtnipKOyCr81FqD5AIB">
+                    <div class="flex items-center" data-page-node-id="zRD63n8gV64UgTHqyV1IZn">
+                        <span class="mdi mdi-file-document text-green-600 text-xl mr-3" data-page-node-id="vOvGjcCaBArvRGdDvq3Qey"></span>
+                        <div data-page-node-id="8wldvBvzmJjKlkdGPdzUCZ">
+                            <p class="font-medium text-gray-800" data-page-node-id="BDhGhYDVE1GAjZ34fYpgA1">dashboard.html</p>
+                            <p class="text-sm text-gray-500" data-page-node-id="iR5rx3u56mXfjDp04H8jyU">仪表盘</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="admin.html" class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition" data-page-node-id="8YAo6WgpHqA6EiLlcXfb5z">
+                    <div class="flex items-center" data-page-node-id="edhmU5NiXYvIum3nxCYF9Q">
+                        <span class="mdi mdi-file-document text-green-600 text-xl mr-3" data-page-node-id="sUeSG8EnNUFkK9smc7mi7U"></span>
+                        <div data-page-node-id="7XqPAAeqUXxYy3GbQgwnqN">
+                            <p class="font-medium text-gray-800" data-page-node-id="OKE2Wb1GGh8oUobrr4oSFn">admin.html</p>
+                            <p class="text-sm text-gray-500" data-page-node-id="VEB1SDQmmGvuF6X539AHSi">后台管理</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="image-detect.html" class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition" data-page-node-id="WY9Vp6uhCM5vHYbzFLd149">
+                    <div class="flex items-center" data-page-node-id="cxV2w6UMHmVleCTrVBgnFt">
+                        <span class="mdi mdi-file-document text-green-600 text-xl mr-3" data-page-node-id="YEbPHlUBZaHUEOswaOAjo9"></span>
+                        <div data-page-node-id="bCPUEyL4XBiT1uuyAx1IZ5">
+                            <p class="font-medium text-gray-800" data-page-node-id="IUAGI2cZyyE78iJbI9vkeI">image-detect.html</p>
+                            <p class="text-sm text-gray-500" data-page-node-id="X93XGaW5H5FOnoFBP1956u">图像检测</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 设计说明 -->
+        <div class="mt-8 bg-green-50 rounded-xl p-6" data-page-node-id="ly0b7CYaK1PFF3GmRcnTUr">
+            <h3 class="text-lg font-semibold text-green-800 mb-4" data-page-node-id="vqG2hiIAoMBtjVycunwL3E">设计说明</h3>
+            <ul class="space-y-2 text-green-700" data-page-node-id="Mb6nwApuTSeDrH8xWkfjlp">
+                <li class="flex items-start" data-page-node-id="MfG9sTeQ6nYhf2wqlRxZ3G">
+                    <span class="mdi mdi-check-circle text-green-500 mr-2 mt-1" data-page-node-id="EpJ4FsDVIWPskLyZUe805l"></span>
+                    所有页面使用Tailwind CSS构建，支持响应式设计
+                </li>
+                <li class="flex items-start" data-page-node-id="DqfHbGlFFB2c9weqv1Zc5r">
+                    <span class="mdi mdi-check-circle text-green-500 mr-2 mt-1" data-page-node-id="ujeeyaXoeMxQebxsRKpUQZ"></span>
+                    包含完整的后台管理系统，支持用户、角色、权限管理
+                </li>
+                <li class="flex items-start" data-page-node-id="gXjFq4Rx4WTjao5wHxPDhG">
+                    <span class="mdi mdi-check-circle text-green-500 mr-2 mt-1" data-page-node-id="AdcMFddyvW8zYBjSlzSORD"></span>
+                    系统配置支持告警规则、模型参数、数据备份等功能
+                </li>
+                <li class="flex items-start" data-page-node-id="JUQplelC1QvJaWPz1YVZYu">
+                    <span class="mdi mdi-check-circle text-green-500 mr-2 mt-1" data-page-node-id="zSR2cTUzMJ8Wxi7ABcz52G"></span>
+                    图像检测页面包含完整的上传、配置、检测、结果展示流程
+                </li>
+                <li class="flex items-start" data-page-node-id="SSQT7IxEh4EdSJDrAkOad5">
+                    <span class="mdi mdi-check-circle text-green-500 mr-2 mt-1" data-page-node-id="7rQVEGVrC6gjm02yZsoCGl"></span>
+                    使用Material Design Icons图标库，界面美观易用
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 引入Material Design Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet" data-page-node-id="FcpXaDivXtx0vBqDAGk4CH">
+</body>
+</html>

@@ -1,0 +1,93 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 环境文件
+.env
+.env.local
+.env.*.local
+
+# 数据文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 上传文件
+uploads/*
+!uploads/.gitkeep
+
+# 模型文件
+models/*.pt
+models/*.onnx
+models/*.engine
+models/*.tflite
+
+# 日志文件
+logs/*.log
+
+# 构建产物
+dist/
+build/
+dist_verify/
+
+# 临时文件
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
+
+# 测试
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# ── 大数据与运行时生成物（不入库）──
+# 训练数据集（约 670MB）
+data/
+# YOLO 训练输出目录（checkpoints/权重，约 2GB）
+models/
+# 后端模型权重（*.pt，二进制资产，按需单独分发；已有 models/*.pt 仅覆盖根目录，这里补全 backend 下）
+backend/models/*.pt
+backend/*.pt
+backend/weights/
+# 用户上传文件（测试视频等，约 2.2GB）
+backend/uploads/
+# 检测结果与生成视频（约 1.5GB）
+backend/static/video_*
+backend/static/results/
+# 训练 runs 与运行期媒体/数据
+backend/runs/
+backend/data/media/
+backend/data/data/

@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>森林火灾烟雾检测系统 - 后台管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac',
+                400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d',
+                800: '#166534', 900: '#14532d'
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body { font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; }
+      .card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+      .soft-border { border: 1px solid #e5e7eb; }
+      .active-nav { background: #dcfce7; color: #15803d; font-weight: 600; }
+      .muted { color: #6b7280; }
+      .tag { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 999px; font-size: 12px; }
+      .grid-auto-fit { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+      .clickable { cursor: pointer; transition: all 0.15s; }
+      .clickable:hover { border-color: #16a34a; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+      .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; display: flex; align-items: center; justify-content: center; }
+      .modal-content { background: white; border-radius: 16px; max-width: 90vw; max-height: 90vh; width: 960px; overflow-y: auto; }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex min-h-screen" id="app">
+      <aside class="w-[260px] soft-border bg-white p-5 flex flex-col gap-5">
+        <div>
+          <div class="text-xl font-semibold">检测结果</div>
+          <p class="text-sm muted mt-2">查看告警与险情事件的详情、上传图片、检测帧与处置记录。</p>
+        </div>
+
+        <nav class="flex flex-col gap-1 text-sm" id="nav">
+          <button class="flex flex-col gap-1 rounded-xl px-4 py-3 text-left hover:bg-gray-50 active-nav" data-page="alerts">
+            <span>告警记录</span>
+            <span class="text-xs muted">点开每条告警，看证据和处置状态</span>
+          </button>
+          <button class="flex flex-col gap-1 rounded-xl px-4 py-3 text-left hover:bg-gray-50" data-page="events">
+            <span>险情事件</span>
+            <span class="text-xs muted">点开每起事件，看时间线和完整证据</span>
+          </button>
+          <button class="flex flex-col gap-1 rounded-xl px-4 py-3 text-left hover:bg-gray-50" data-page="users">
+            <span>人员与权限</span>
+            <span class="text-xs muted">管理员可见，管理账号和角色</span>
+          </button>
+        </nav>
+
+        <div class="mt-auto card soft-border p-4 text-sm space-y-2">
+          <div class="font-semibold">登录</div>
+          <input id="loginUser" class="border rounded-lg px-3 py-2 w-full" placeholder="用户名" />
+          <input id="loginPwd" type="password" class="border rounded-lg px-3 py-2 w-full" placeholder="密码" />
+          <div class="flex gap-2">
+            <button id="loginBtn" class="flex-1 px-3 py-2 rounded-lg bg-brand-600 text-white hover:bg-brand-700 text-sm">登录</button>
+            <button id="logoutBtn" class="flex-1 px-3 py-2 rounded-lg border text-gray-600 hover:bg-gray-50 text-sm hidden">退出</button>
+          </div>
+          <div class="text-xs">
+            <div>当前账号：<span id="userName" class="font-semibold">未登录</span></div>
+            <div>角色：<span id="userRole" class="tag bg-gray-100 text-gray-600">-</span></div>
+          </div>
+          <div id="loginMsg" class="text-xs text-red-500 hidden"></div>
+        </div>
+      </aside>
+
+      <main class="flex-1 p-6 space-y-5 overflow-y-auto">
+        <!-- alerts -->
+        <section id="page-alerts" class="space-y-5">
+          <div class="card soft-border p-5">
+            <div class="text-lg font-semibold">告警记录</div>
+            <p class="text-sm muted mt-1">点任意一条告警，可以查看检测帧、原始上传内容与处置结果。</p>
+          </div>
+          <div class="grid-auto-fit" id="alertStats"></div>
+          <div class="card soft-border p-4 text-sm">
+            <div class="font-semibold mb-3">所有告警（点击查看详情）</div>
+            <div id="alertsList" class="space-y-2"></div>
+          </div>
+        </section>
+
+        <!-- events -->
+        <section id="page-events" class="hidden space-y-5">
+          <div class="card soft-border p-5">
+            <div class="text-lg font-semibold">险情事件</div>
+            <p class="text-sm muted mt-1">每个事件都有唯一编号，点开看完整证据、时间线和处置记录。</p>
+          </div>
+          <div class="grid-auto-fit" id="eventStats"></div>
+          <div class="card soft-border p-4 text-sm">
+            <div class="font-semibold mb-3">所有事件（点击查看详情）</div>
+            <div id="eventsList" class="space-y-2"></div>
+          </div>
+        </section>
+
+        <!-- users -->
+        <section id="page-users" class="hidden space-y-5">
+          <div class="card soft-border p-5">
+            <div class="text-lg font-semibold">人员与权限</div>
+            <p class="text-sm muted mt-1">只有管理员能管理账号和角色。</p>
+          </div>
+          <div class="card soft-border p-4 text-sm">
+            <div id="userTable"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- 详情弹窗 -->
+    <div id="detailModal" class="modal-backdrop hidden">
+      <div class="modal-content" id="detailBody"></div>
+    </div>
+
+    <script>
+      const api = async (path, options = {}) => {
+        const token = localStorage.getItem('admin_token')
+        const headers = options.headers ? { ...options.headers } : {}
+        if (token) headers['Authorization'] = `Bearer ${token}`
+        if (options.json) {
+          headers['Content-Type'] = 'application/json'
+          options.body = JSON.stringify(options.json)
+          delete options.json
+        }
+        const res = await fetch(path, { ...options, headers })
+        return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) }
+      }
+      const qs = (id) => document.getElementById(id)
+      const show = (id) => qs(id)?.classList.remove('hidden')
+      const hide = (id) => qs(id)?.classList.add('hidden')
+      const setNav = (page) => {
+        document.querySelectorAll('#nav button').forEach(btn => {
+          btn.classList.toggle('active-nav', btn.dataset.page === page)
+        })
+        ;['alerts','events','users'].forEach(p => {
+          const sec = qs(`page-${p}`)
+          if (!sec) return
+          if (p === page) sec.classList.remove('hidden')
+          else sec.classList.add('hidden')
+        })
+      }
+      const updateIdentity = () => {
+        let user = {}
+        try { user = JSON.parse(localStorage.getItem('admin_user') || '{}') } catch {}
+        qs('userName').textContent = user.real_name || user.username || '未登录'
+        const roleMap = { admin: '管理员', operator: '操作员', viewer: '查看者' }
+        qs('userRole').textContent = roleMap[user.role] || user.role || '-'
+        if (localStorage.getItem('admin_token')) { show('logoutBtn'); hide('loginBtn') }
+        else { hide('logoutBtn'); show('loginBtn') }
+        const userBtn = document.querySelector('[data-page="users"]')
+        if (userBtn) userBtn.style.display = user.role === 'admin' ? '' : 'none'
+      }
+
+      const niceNum = (v) => v ?? 0
+      const renderList = (arr, empty, mapFn) => {
+        if (!arr?.length) return `<div class="muted text-sm">${empty}</div>`
+        return arr.map(mapFn).join('')
+      }
+
+      const alertLevelMap = { critical: { text: '紧急', cls: 'bg-red-100 text-red-600' }, high: { text: '高', cls: 'bg-amber-100 text-amber-600' }, medium: { text: '中', cls: 'bg-blue-100 text-blue-600' }, low: { text: '低', cls: 'bg-gray-100 text-gray-600' } }
+      const statusMap = { open: { text: '待处置', cls: 'bg-red-100 text-red-600' }, handling: { text: '处置中', cls: 'bg-amber-100 text-amber-600' }, closed: { text: '已结案', cls: 'bg-emerald-100 text-emerald-600' }, false_alarm: { text: '误报', cls: 'bg-gray-100 text-gray-600' } }
+
+      const loadAlerts = async () => {
+        const [stats, list] = await Promise.all([
+          api('/api/alerts/stats'),
+          api('/api/alerts?limit=100')
+        ])
+        const s = stats.ok ? stats.data || {} : {}
+        qs('alertStats').innerHTML = [
+          { label: '未读告警', value: niceNum(s.unread_count) },
+          { label: '待处置', value: niceNum(s.pending_count) },
+          { label: '已确认处置', value: niceNum(s.confirmed_count) },
+          { label: '已忽略', value: niceNum(s.ignored_count) }
+        ].map(i => `<div class="card soft-border p-4"><div class="text-xs muted">${i.label}</div><div class="text-xl font-semibold mt-1">${i.value}</div></div>`).join('')
+        const items = list.ok ? (list.data?.list || []) : []
+        qs('alertsList').innerHTML = renderList(items, '暂无告警记录', item => {
+          const lv = alertLevelMap[item.level] || alertLevelMap.low
+          return `
+            <div class="clickable soft-border rounded-xl p-3 flex items-center justify-between gap-3" onclick="openAlertDetail('${item.alert_id}')">
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="tag ${lv.cls}">${lv.text}</span>
+                  <span class="font-medium">${item.message || '-'}</span>
+                </div>
+                <div class="text-xs muted mt-1">火焰 ${niceNum(item.fire_count)} / 烟雾 ${niceNum(item.smoke_count)} · ${item.created_at || ''}</div>
+              </div>
+              <div class="text-xs muted">${item.handled_by ? '已处置：' + item.handled_by : '点击查看'}</div>
+            </div>
+          `
+        })
+      }
+
+      const openAlertDetail = async (alertId) => {
+        qs('detailBody').innerHTML = '<div class="p-8 muted">加载中...</div>'
+        show('detailModal')
+        const res = await api(`/api/alerts/${alertId}/detail`)
+        if (!res.ok) {
+          qs('detailBody').innerHTML = `<div class="p-8 text-red-500">加载失败：${res.data?.detail || res.status}</div>`
+          return
+        }
+        const a = res.data
+        const lv = alertLevelMap[a.level] || alertLevelMap.low
+        const st = statusMap[a.status] || statusMap.open
+        const det = a.detection || {}
+        const detections = det.detections || []
+        const risk = det.risk || {}
+        const frames = (a.alert_moments || []).map(m => m.frame_url).filter(Boolean)
+        const ev = a.event || null
+        qs('detailBody').innerHTML = `
+          <div class="p-6 space-y-5">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="text-xl font-semibold">告警详情</div>
+                <div class="text-sm muted mt-1">${a.alert_id}</div>
+              </div>
+              <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
+            </div>
+
+            <div class="flex gap-2 flex-wrap">
+              <span class="tag ${lv.cls}">${lv.text}风险</span>
+              <span class="tag ${st.cls}">${st.text}</span>
+              <span class="tag bg-gray-100 text-gray-600">${a.source_type || 'image'}</span>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+              <div class="card soft-border p-4 space-y-2">
+                <div class="font-semibold">检测摘要</div>
+                <div>检测ID：${a.detection_id || '-'}</div>
+                <div>告警时间：${a.created_at || '-'}</div>
+                <div>火焰：<span class="text-red-600 font-semibold">${niceNum(a.fire_count)}</span></div>
+                <div>烟雾：<span class="text-amber-600 font-semibold">${niceNum(a.smoke_count)}</span></div>
+                <div>风险评分：<span class="font-semibold">${niceNum(risk.score)}</span></div>
+                <div>风险等级：${risk.level || '-'}</div>
+                <div class="muted text-xs">${risk.advice || ''}</div>
+              </div>
+              <div class="card soft-border p-4 space-y-2">
+                <div class="font-semibold">处置结果</div>
+                <div>状态：<span class="tag ${st.cls}">${st.text}</span></div>
+                <div>处置人：${a.handled_by || '尚未处置'}</div>
+                <div>处置时间：${a.handled_at || '-'}</div>
+                <div>处置备注：<span class="muted">${a.handled_note || '无'}</span></div>
+                <div class="muted text-xs">${a.is_read ? '已读' : '未读'}</div>
+              </div>
+            </div>
+
+            <div class="card soft-border p-4 space-y-3">
+              <div class="font-semibold">上传的图片与检测结果</div>
+              ${det.image_url || ev?.media?.length ? `
+                <div class="grid md:grid-cols-2 gap-3">
+                  ${ev?.media?.find(m => m.role === 'original') ? `<div><div class="text-xs muted mb-1">原始上传</div><img src="${ev.media.find(m => m.role === 'original').file_url}" class="w-full rounded-lg border" /></div>` : (det.image_url ? `<div><div class="text-xs muted mb-1">原始上传</div><img src="${det.image_url}" class="w-full rounded-lg border" /></div>` : '<div class="muted text-sm">无原图</div>')}
+                  ${ev?.media?.find(m => m.role === 'annotated') ? `<div><div class="text-xs muted mb-1">检测结果（标注）</div><img src="${ev.media.find(m => m.role === 'annotated').file_url}" class="w-full rounded-lg border" /></div>` : '<div class="rounded-lg border bg-gray-50 h-64 flex items-center justify-center text-xs muted">标注图未保存</div>'}
+                </div>
+              ` : '<div class="muted text-sm">这条告警没有附带图片</div>'}
+              ${detections.length ? `
+                <div>
+                  <div class="text-xs muted mb-1">检测目标列表</div>
+                  <table class="w-full text-xs">
+                    <thead class="text-gray-500"><tr><th class="text-left">类别</th><th class="text-left">置信度</th><th class="text-left">位置</th></tr></thead>
+                    <tbody>
+                      ${detections.map(d => `<tr><td>${d.class_name}</td><td>${(d.confidence * 100).toFixed(1)}%</td><td>${d.bbox?.x1?.toFixed(0)}, ${d.bbox?.y1?.toFixed(0)} → ${d.bbox?.x2?.toFixed(0)}, ${d.bbox?.y2?.toFixed(0)}</td></tr>`).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              ` : ''}
+            </div>
+
+            ${frames.length ? `
+              <div class="card soft-border p-4 space-y-3">
+                <div class="font-semibold">视频关键帧</div>
+                <div class="grid grid-cols-3 gap-2">
+                  ${frames.slice(0, 9).map(u => `<img src="${u}" class="rounded-lg border w-full" />`).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            ${ev ? `
+              <div class="card soft-border p-4 space-y-2 text-sm">
+                <div class="font-semibold">关联险情事件</div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-mono">${ev.event_no}</span>
+                  <span class="tag bg-gray-100 text-gray-600">${ev.source_type}</span>
+                  <span class="tag bg-gray-100 text-gray-600">命中 ${niceNum(ev.hit_count)} 次</span>
+                </div>
+                <div>首次发现：${ev.first_seen_at || '-'}</div>
+                <div>风险评分：${niceNum(ev.risk_score)}</div>
+                ${ev.logs && ev.logs.length ? `
+                  <div class="mt-3 space-y-1">
+                    <div class="font-medium">处置时间线</div>
+                    ${ev.logs.map(l => `<div class="text-xs muted">${l.created_at} · ${l.operator || '系统'} · ${l.action} ${l.note ? '· ' + l.note : ''}</div>`).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            ` : ''}
+          </div>
+        `
+      }
+
+      const openEventDetail = async (eventNo) => {
+        qs('detailBody').innerHTML = '<div class="p-8 muted">加载中...</div>'
+        show('detailModal')
+        const res = await api(`/api/events/${eventNo}`)
+        if (!res.ok) {
+          qs('detailBody').innerHTML = `<div class="p-8 text-red-500">加载失败：${res.data?.detail || res.status}</div>`
+          return
+        }
+        const ev = res.data
+        const lv = alertLevelMap[ev.level] || alertLevelMap.low
+        const st = statusMap[ev.status] || statusMap.open
+        const media = ev.media || []
+        const logs = ev.logs || []
+        const originals = media.filter(m => m.role === 'original')
+        const annotated = media.filter(m => m.role === 'annotated')
+        qs('detailBody').innerHTML = `
+          <div class="p-6 space-y-5">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="text-xl font-semibold">${ev.event_no}</div>
+                <div class="text-sm muted mt-1">险情事件详情 · 首次发现 ${ev.first_seen_at || '-'}</div>
+              </div>
+              <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
+            </div>
+
+            <div class="flex gap-2 flex-wrap">
+              <span class="tag ${lv.cls}">${lv.text}风险</span>
+              <span class="tag ${st.cls}">${st.text}</span>
+              <span class="tag bg-gray-100 text-gray-600">${ev.source_type || 'image'}</span>
+              <span class="tag bg-gray-100 text-gray-600">命中 ${niceNum(ev.hit_count)} 次</span>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+              <div class="card soft-border p-4 space-y-2">
+                <div class="font-semibold">险情信息</div>
+                <div>来源：${ev.source_ref || '-'}</div>
+                <div>最近命中：${ev.last_seen_at || '-'}</div>
+                <div>火焰：<span class="text-red-600 font-semibold">${niceNum(ev.fire_count)}</span></div>
+                <div>烟雾：<span class="text-amber-600 font-semibold">${niceNum(ev.smoke_count)}</span></div>
+                <div>最高置信度：${((ev.max_confidence || 0) * 100).toFixed(1)}%</div>
+                <div>风险评分：<span class="font-semibold">${niceNum(ev.risk_score)}</span></div>
+                <div>点位：${ev.location || '未标注'}</div>
+              </div>
+              <div class="card soft-border p-4 space-y-2">
+                <div class="font-semibold">处置记录</div>
+                <div>状态：<span class="tag ${st.cls}">${st.text}</span></div>
+                <div>处置人：${ev.handled_by || '尚未处置'}</div>
+                <div>处置时间：${ev.handled_at || '-'}</div>
+                <div>处置备注：<span class="muted">${ev.handled_note || '无'}</span></div>
+              </div>
+            </div>
+
+            ${originals.length || annotated.length ? `
+              <div class="card soft-border p-4 space-y-3">
+                <div class="font-semibold">上传图片与检测结果</div>
+                <div class="grid md:grid-cols-2 gap-3">
+                  ${originals.map(m => `<div><div class="text-xs muted mb-1">原始上传</div><img src="${m.file_url}" class="w-full rounded-lg border" /></div>`).join('') || '<div class="muted text-sm">无原图</div>'}
+                  ${annotated.map(m => `<div><div class="text-xs muted mb-1">检测标注</div><img src="${m.file_url}" class="w-full rounded-lg border" /></div>`).join('') || '<div class="muted text-sm">无标注图</div>'}
+                </div>
+              </div>
+            ` : '<div class="muted text-sm">这件事件还没有关联媒体</div>'}
+
+            ${logs.length ? `
+              <div class="card soft-border p-4 space-y-3">
+                <div class="font-semibold">处置时间线</div>
+                <div class="space-y-2">
+                  ${logs.map(l => {
+                    const actionMap = { confirm: { text: '确认处置', cls: 'bg-emerald-100 text-emerald-700' }, ignore: { text: '标记误报', cls: 'bg-gray-100 text-gray-600' }, close: { text: '结案', cls: 'bg-blue-100 text-blue-600' }, false_alarm: { text: '标记误报', cls: 'bg-gray-100 text-gray-600' } }
+                    const ai = actionMap[l.action] || { text: l.action, cls: 'bg-gray-100 text-gray-600' }
+                    return `
+                      <div class="flex items-start gap-3">
+                        <span class="tag ${ai.cls}">${ai.text}</span>
+                        <div class="flex-1">
+                          <div class="text-sm">${l.operator || '系统'}<span class="muted"> · ${l.created_at || ''}</span></div>
+                          ${l.note ? `<div class="text-xs muted mt-1">${l.note}</div>` : ''}
+                        </div>
+                      </div>
+                    `
+                  }).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `
+      }
+
+      const closeModal = () => hide('detailModal')
+      window.openAlertDetail = openAlertDetail
+      window.openEventDetail = openEventDetail
+      window.closeModal = closeModal
+      qs('detailModal').addEventListener('click', (e) => { if (e.target.id === 'detailModal') closeModal() })
+
+      const loadEvents = async () => {
+        const [stats, list] = await Promise.all([
+          api('/api/events/stats'),
+          api('/api/events?page=1&page_size=50')
+        ])
+        const s = stats.ok ? stats.data || {} : {}
+        qs('eventStats').innerHTML = [
+          { label: '险情事件', value: niceNum(s.total) },
+          { label: '待处置', value: niceNum(s.by_status?.open) },
+          { label: '已结案', value: niceNum(s.by_status?.closed) },
+          { label: '误报', value: niceNum(s.by_status?.false_alarm) }
+        ].map(i => `<div class="card soft-border p-4"><div class="text-xs muted">${i.label}</div><div class="text-xl font-semibold mt-1">${i.value}</div></div>`).join('')
+        const items = list.ok ? (list.data?.list || []) : []
+        qs('eventsList').innerHTML = renderList(items, '暂无险情事件', item => {
+          const lv = alertLevelMap[item.level] || alertLevelMap.low
+          const st = statusMap[item.status] || statusMap.open
+          return `
+            <div class="clickable soft-border rounded-xl p-3 flex items-center justify-between gap-3" onclick="openEventDetail('${item.event_no}')">
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="tag ${lv.cls}">${lv.text}</span>
+                  <span class="font-mono text-sm">${item.event_no || '-'}</span>
+                </div>
+                <div class="text-xs muted mt-1">火焰 ${niceNum(item.fire_count)} / 烟雾 ${niceNum(item.smoke_count)} · 风险 ${niceNum(item.risk_score)} · 命中 ${niceNum(item.hit_count)}</div>
+              </div>
+              <div class="text-right text-xs muted">
+                <div>${item.first_seen_at || ''}</div>
+                <span class="tag ${st.cls} mt-1 inline-block">${st.text}</span>
+              </div>
+            </div>
+          `
+        })
+      }
+
+      const loadUsers = async () => {
+        const res = await api('/api/admin/users')
+        const list = res.ok ? (res.data?.list || []) : []
+        if (!list.length) { qs('userTable').innerHTML = '<div class="muted">暂无员工数据</div>'; return }
+        qs('userTable').innerHTML = `
+          <table class="w-full text-left text-sm">
+            <thead class="text-xs text-gray-500 border-b">
+              <tr><th class="py-2 pr-3">用户名</th><th class="py-2 pr-3">姓名</th><th class="py-2 pr-3">角色</th><th class="py-2 pr-3">状态</th><th class="py-2 pr-3">最后登录</th><th class="py-2">创建</th></tr>
+            </thead>
+            <tbody>
+              ${list.map(item => `
+                <tr class="border-b">
+                  <td class="py-2 pr-3">${item.username}</td>
+                  <td class="py-2 pr-3">${item.real_name || '-'}</td>
+                  <td class="py-2 pr-3">${({admin:'管理员',operator:'操作员',viewer:'查看者'})[item.role] || item.role}</td>
+                  <td class="py-2 pr-3">${item.is_active ? '正常' : '禁用'}</td>
+                  <td class="py-2 pr-3">${item.last_login || '-'}</td>
+                  <td class="py-2">${item.created_at || '-'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `
+      }
+
+      const doLogin = async () => {
+        const username = qs('loginUser').value.trim()
+        const password = qs('loginPwd').value
+        hide('loginMsg')
+        if (!username || !password) { qs('loginMsg').textContent = '请输入用户名和密码'; show('loginMsg'); return }
+        const res = await api('/api/admin/login', { method: 'POST', json: { username, password } })
+        if (!res.ok) { qs('loginMsg').textContent = res.data?.detail || '登录失败'; show('loginMsg'); return }
+        localStorage.setItem('admin_token', res.data.token)
+        localStorage.setItem('admin_user', JSON.stringify(res.data))
+        updateIdentity()
+        await refresh()
+      }
+      const doLogout = () => {
+        localStorage.removeItem('admin_token')
+        localStorage.removeItem('admin_user')
+        updateIdentity()
+      }
+      const refresh = async () => {
+        await loadAlerts()
+        await loadEvents()
+        let user = {}
+        try { user = JSON.parse(localStorage.getItem('admin_user') || '{}') } catch {}
+        if (user.role === 'admin') await loadUsers()
+      }
+      qs('loginBtn').addEventListener('click', doLogin)
+      qs('logoutBtn').addEventListener('click', doLogout)
+      document.querySelectorAll('#nav button').forEach(btn => btn.addEventListener('click', () => setNav(btn.dataset.page)))
+      updateIdentity()
+      refresh()
+    </script>
+  </body>
+</html>

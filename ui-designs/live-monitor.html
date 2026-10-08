@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>森林火灾烟雾检测系统 - 实时监控</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(180deg, #001529 0%, #002140 100%);
+            min-height: 100vh;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: rgba(255, 255, 255, 0.65);
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #16a34a;
+        }
+        .sidebar-item.active {
+            background: rgba(22, 163, 74, 0.2);
+        }
+        .video-stage {
+            position: relative;
+            background: #111;
+            border-radius: 8px;
+            overflow: hidden;
+            min-height: 360px;
+        }
+        .scene {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, #7ba7c9 0%, #a8c4a2 38%, #3f5d3a 62%, #24361f 100%);
+        }
+        .scene::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 18% 72%, rgba(120, 160, 110, .55) 0%, transparent 42%),
+                radial-gradient(ellipse at 76% 66%, rgba(90, 130, 85, .5) 0%, transparent 46%);
+        }
+        .detection-box {
+            position: absolute;
+            border: 2px solid;
+            border-radius: 4px;
+        }
+        .detection-box.fire {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.12);
+        }
+        .detection-box.smoke {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.12);
+        }
+        .detection-label {
+            position: absolute;
+            top: -22px;
+            left: -2px;
+            padding: 2px 8px;
+            border-radius: 4px 4px 0 0;
+            font-size: 11px;
+            font-weight: 500;
+            color: #fff;
+            white-space: nowrap;
+        }
+        .detection-label.fire { background: #ef4444; }
+        .detection-label.smoke { background: #f59e0b; }
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        .dot-running { background: #16a34a; }
+        .dot-idle { background: #c0c4cc; }
+        .dot-error { background: #f56c6c; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex">
+        <div class="sidebar">
+            <div class="flex items-center justify-center h-16 border-b border-white border-opacity-10">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                        <span class="mdi mdi-fire text-white text-lg"></span>
+                    </div>
+                    <span class="ml-3 text-white font-semibold text-sm">森林火灾检测</span>
+                </div>
+            </div>
+            <nav class="mt-4">
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-view-dashboard text-lg"></span>
+                    <span class="ml-3">首页</span>
+                </a>
+                <a href="#" class="sidebar-item active">
+                    <span class="mdi mdi-monitor text-lg"></span>
+                    <span class="ml-3">实时监控</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-image text-lg"></span>
+                    <span class="ml-3">图像检测</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-video text-lg"></span>
+                    <span class="ml-3">视频检测</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-airplane text-lg"></span>
+                    <span class="ml-3">航拍分析</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-bell text-lg"></span>
+                    <span class="ml-3">告警中心</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-chart-bar text-lg"></span>
+                    <span class="ml-3">数据分析</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-cog text-lg"></span>
+                    <span class="ml-3">模型管理</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="mdi mdi-shield-check text-lg"></span>
+                    <span class="ml-3">后台管理</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="flex-1 min-w-0">
+            <header class="bg-white h-16 flex items-center justify-between px-6 shadow-sm">
+                <div class="flex items-center">
+                    <button class="mr-4">
+                        <span class="mdi mdi-menu text-xl text-gray-600"></span>
+                    </button>
+                    <nav class="flex items-center text-sm text-gray-500">
+                        <a href="#" class="hover:text-green-600">首页</a>
+                        <span class="mx-2">/</span>
+                        <span class="text-gray-800">实时监控</span>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="px-3 py-1 bg-green-50 text-green-700 text-xs rounded-full flex items-center">
+                        <span class="mdi mdi-access-point text-sm mr-1"></span>
+                        3 路在线
+                    </span>
+                    <button class="relative p-2 text-gray-600 hover:text-green-600">
+                        <span class="mdi mdi-bell-outline text-xl"></span>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <span class="mdi mdi-account text-white"></span>
+                        </div>
+                        <span class="text-sm text-gray-700">管理员</span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-6">
+                <div class="flex gap-4" style="height: calc(100vh - 152px);">
+
+                    <!-- 左侧：监控点位 -->
+                    <div class="w-64 bg-white rounded-lg flex flex-col overflow-hidden flex-shrink-0">
+                        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                            <span class="font-semibold text-gray-800">监控点位</span>
+                            <button class="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700">
+                                <span class="mdi mdi-plus"></span> 添加
+                            </button>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-2">
+                            <div class="flex items-center gap-2 p-3 rounded-lg bg-green-50 cursor-pointer">
+                                <span class="status-dot dot-running"></span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm text-gray-800 truncate">1号瞭望塔</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">运行中 · 24.6 fps</div>
+                                </div>
+                                <span class="mdi mdi-pause-circle-outline text-gray-400"></span>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <span class="status-dot dot-running"></span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm text-gray-800 truncate">东侧林区入口</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">运行中 · 22.1 fps</div>
+                                </div>
+                                <span class="mdi mdi-pause-circle-outline text-gray-400"></span>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <span class="status-dot dot-error"></span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm text-gray-800 truncate">北坡高点</div>
+                                    <div class="text-xs text-red-400 mt-0.5">连接失败</div>
+                                </div>
+                                <span class="mdi mdi-play-circle-outline text-gray-400"></span>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <span class="status-dot dot-idle"></span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm text-gray-800 truncate">无人机图传</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">已停止</div>
+                                </div>
+                                <span class="mdi mdi-play-circle-outline text-gray-400"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 中间：视频画面 -->
+                    <div class="flex-1 flex flex-col gap-3 min-w-0">
+                        <div class="video-stage flex-1">
+                            <div class="scene"></div>
+
+                            <div class="detection-box fire" style="top: 46%; left: 22%; width: 17%; height: 26%;">
+                                <span class="detection-label fire">fire 94.2%</span>
+                            </div>
+                            <div class="detection-box smoke" style="top: 24%; left: 38%; width: 30%; height: 34%;">
+                                <span class="detection-label smoke">smoke 87.6%</span>
+                            </div>
+
+                            <div class="absolute top-3 left-3 flex gap-2">
+                                <span class="px-2.5 py-1 bg-black bg-opacity-60 text-white text-xs rounded">24.6 FPS</span>
+                                <span class="px-2.5 py-1 bg-red-500 text-white text-xs rounded">火焰 1</span>
+                                <span class="px-2.5 py-1 bg-orange-500 text-white text-xs rounded">烟雾 1</span>
+                            </div>
+                            <div class="absolute bottom-3 right-3 px-2.5 py-1 bg-black bg-opacity-60 text-white text-xs rounded">
+                                1号瞭望塔 · 2026-09-14 16:20:33
+                            </div>
+                            <div class="absolute top-3 right-3 px-2.5 py-1 bg-black bg-opacity-60 text-white text-xs rounded flex items-center">
+                                <span class="w-2 h-2 bg-red-500 rounded-full mr-1.5"></span> REC
+                            </div>
+                        </div>
+
+                        <!-- 参数栏 -->
+                        <div class="bg-white rounded-lg px-4 py-3 flex items-center gap-6 flex-wrap">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-gray-600">置信度</span>
+                                <div class="w-36 h-1.5 bg-gray-200 rounded-full relative">
+                                    <div class="absolute left-0 top-0 h-1.5 bg-green-500 rounded-full" style="width: 50%"></div>
+                                    <div class="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white border-2 border-green-500 rounded-full" style="left: calc(50% - 7px)"></div>
+                                </div>
+                                <span class="text-sm text-gray-800 font-mono">0.50</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-gray-600">IOU</span>
+                                <div class="w-36 h-1.5 bg-gray-200 rounded-full relative">
+                                    <div class="absolute left-0 top-0 h-1.5 bg-green-500 rounded-full" style="width: 45%"></div>
+                                    <div class="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white border-2 border-green-500 rounded-full" style="left: calc(45% - 7px)"></div>
+                                </div>
+                                <span class="text-sm text-gray-800 font-mono">0.45</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-gray-600">推理跳帧</span>
+                                <input type="number" value="3" class="w-16 px-2 py-1 border border-gray-300 rounded text-sm text-center">
+                            </div>
+                            <button class="px-4 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700">应用</button>
+                            <span class="text-xs text-gray-400 ml-auto">参数调整无需重启流，实时生效</span>
+                        </div>
+                    </div>
+
+                    <!-- 右侧：实时检测 -->
+                    <div class="w-80 bg-white rounded-lg flex flex-col overflow-hidden flex-shrink-0">
+                        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                            <span class="font-semibold text-gray-800">实时检测</span>
+                            <span class="text-xs text-green-600 flex items-center">
+                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span> 已连接
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 p-4">
+                            <div class="bg-red-50 rounded-lg p-3.5 text-center">
+                                <div class="text-2xl font-semibold text-red-600">1</div>
+                                <div class="text-xs text-gray-500 mt-1">火焰</div>
+                            </div>
+                            <div class="bg-orange-50 rounded-lg p-3.5 text-center">
+                                <div class="text-2xl font-semibold text-orange-600">1</div>
+                                <div class="text-xs text-gray-500 mt-1">烟雾</div>
+                            </div>
+                        </div>
+
+                        <div class="px-4 pb-3">
+                            <div class="flex justify-between text-sm text-gray-600 py-1.5 border-b border-dashed border-gray-100">
+                                <span>推理耗时</span><span>42.8 ms</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-600 py-1.5 border-b border-dashed border-gray-100">
+                                <span>已处理帧数</span><span>18,432</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-600 py-1.5 border-b border-dashed border-gray-100">
+                                <span>最近更新</span><span class="font-mono">16:20:33</span>
+                            </div>
+                        </div>
+
+                        <div class="px-4 py-2 border-t border-gray-100 text-sm font-semibold text-gray-800">检测目标</div>
+                        <div class="flex-1 overflow-y-auto px-4 pb-4">
+                            <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-gray-50 mb-1.5 text-sm">
+                                <span class="px-2 py-0.5 bg-red-500 text-white text-xs rounded">火焰</span>
+                                <span class="text-green-600 font-medium">94.2%</span>
+                                <span class="ml-auto text-xs text-gray-400 font-mono">402,318</span>
+                            </div>
+                            <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-gray-50 mb-1.5 text-sm">
+                                <span class="px-2 py-0.5 bg-orange-500 text-white text-xs rounded">烟雾</span>
+                                <span class="text-green-600 font-medium">87.6%</span>
+                                <span class="ml-auto text-xs text-gray-400 font-mono">688,196</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
